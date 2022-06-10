@@ -1,11 +1,11 @@
 const menu = document.querySelectorAll('a');
-const main = document.getElementsByTagName('main')[0];
+const content = document.getElementsByTagName('content')[0];
 
 window.addEventListener('load', () => {
     const homeMenu = document.getElementsByClassName('home')[0];
     setTimeout(() => {
         home();
-        homeMenu.classList.add('menu-active');
+        homeMenu.classList.add('active-menu');
     }, 100)
     
   });
@@ -13,8 +13,8 @@ window.addEventListener('load', () => {
 menu.forEach(anchor => {
     anchor.addEventListener('click', function(){
 
-        menu.forEach(a => a.classList.remove('menu-active'));
-        anchor.classList.add('menu-active');
+        menu.forEach(a => a.classList.remove('active-menu'));
+        anchor.classList.add('active-menu');
 
         if(anchor.classList.contains('home')){
             home();
@@ -30,16 +30,16 @@ menu.forEach(anchor => {
 
 
 function home(){
-    main.innerHTML = '<h1>Home<h1>';
+    content.innerHTML = '<h1>Home<h1>';
     
 }
 
 
 function genre(){
-    main.innerHTML = '<h1>Genre</h1>';
+    content.innerHTML = '<h1>Genre</h1>';
 }
 
 function comingSoon(){
-    main.innerHTML = '<h1>Coming Soon</h1>';
+    content.innerHTML = '<h1>Coming Soon</h1>';
 }
 

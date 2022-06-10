@@ -50,14 +50,13 @@ nav li a {
 
 nav li a:hover {
     color: red;
-    border-right: 2px solid red;
 }
 
 nav li a span {
     margin-left: 10px;
 }
 
-.menu-active {
+.active-menu {
     border-right: 2px solid red;
     color: red;
 }
@@ -65,5 +64,11 @@ nav li a span {
 
 main {
     height: 100vh;
+    display: grid;
+    grid-template-columns: minmax(500px, 1fr) minmax(200px, 350px);
+}
+
+main aside {
+    border-left: 1px solid #ddd;
 }
 

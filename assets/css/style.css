@@ -57,6 +57,11 @@ nav li a span {
     margin-left: 10px;
 }
 
+.menu-active {
+    border-right: 2px solid red;
+    color: red;
+}
+
 
 main {
     height: 100vh;

@@ -1,161 +1,164 @@
-const menu = document.querySelectorAll('a');
-const content = document.getElementsByTagName('content')[0];
+const mainMenu = document.querySelectorAll('a');
 
 window.addEventListener('load', () => {
     const homeMenu = document.getElementsByClassName('home')[0];
+    const mainMovie = document.querySelector('.main-movie');
+
+    mainMovie.innerHTML = '<span>Loading...</span>';
+
     setTimeout(() => {
-        home();
         homeMenu.classList.add('active-menu');
-    }, 100)
-    
+        home();
+    }, 800);
   });
 
-menu.forEach(anchor => {
-    anchor.addEventListener('click', function(){
+mainMenu.forEach(menu => {
+    menu.addEventListener('click', function(){
+        mainMenu.forEach(a => a.classList.remove('active-menu'));
 
-        menu.forEach(a => a.classList.remove('active-menu'));
-        anchor.classList.add('active-menu');
+        const mainMovie = document.querySelector('.main-movie');
 
-        if(anchor.classList.contains('home')){
-            home();
+        menu.classList.add('active-menu');
 
-        }else if(this.classList.contains('genre')){
-            genre();
-            
+        if(menu.classList.contains('home')){
+            mainMovie.innerHTML = '<span>Loading...</span>';
+            setTimeout(() => {
+                home();
+            }, 800)
+
+        }else if(menu.classList.contains('genre')){
+
+            mainMovie.innerHTML = '<span>Loading...</span>';
+            setTimeout(() => {
+                genre();
+            }, 800)
         }else {
-            comingSoon();
+            mainMovie.innerHTML = '<span>Loading...</span>';
+
+            setTimeout(() => {
+                comingSoon();
+            }, 800)
         }
     })
 })
 
 
 function home(){
-    content.innerHTML = (
+    movieList();
+}
+
+async function movieList(){
+    const response = await getAllMovies();
+
+    const recomendation = [];
+    const release = [];
+    response.results.forEach((movies, index) => {
+        (index <= 9) ? recomendation.push(movies) : release.push(movies); 
+    })
+    
+    const result = (
         `<div>
-        ${searchBar()}
-        ${jumbotron()}
-        ${Recomended()}
-        ${newRelase()}
-        <div>`
-    );
-}
-
-
-function searchBar(){
-    let searchInput = (
-        `<div class="search-bar">
-            <input type="text" placeholder="search movies...">
-        </div>`
-    );
-
-    return searchInput;
-}
-
-
-function jumbotron(){
-    return (
-        `<div class="jumbotron">
-            <img class="hero" src="https://www.nextbestpicture.com/uploads/7/1/0/2/71028997/doctor-strange-in-the-multiverse-of-madness-review_orig.jpg" alt="doctor strange">
-            <h3 class="title">Doctor Strange In The Multiverse of Madness</h3>
-            <p class="description">Dr Stephen Strange casts a forbidden spell that opens a portal to the multiverse. However, a threat emerges that may be too big for his team to handle.</p>
-            <button>Show Detail</button>
+            ${recentlyPlayed(recomendation)}
+            ${newRelease(release)}
         </div>`
     )
+    
+    updateUI(result);
 }
 
-function Recomended(){
+function updateUI(cards){
+    const mainMovie = document.querySelector('.main-movie');
+
+    mainMovie.innerHTML = cards;
+}
+
+function recentlyPlayed(movies){
+    let recomendation = '';
+
+    movies.forEach(m => recomendation += card(m));
+    
     return (
-        `<div class="recomended">
+        `<div class="recently-played">
             <div class="heading">
                 <h3>Recently Played</h3>
-                <p>See All</p>
+                <span class="see-all">See All</span>
             </div>
-            ${cards()}
-        </div>`
-    )
-}
 
-
-function newRelase(){
-    return (
-        `<div class="new-relase">
-            <div class="heading">
-                <h3>New Relase</h3>
-                <p>See All</p>
+            <div class="cards">
+                ${recomendation}
             </div>
-            ${cards()}
-        </div>`
-    )
-}
-
-const items = [
-    {   
-        poster: 'https://upload.wikimedia.org/wikipedia/id/f/f9/TheAvengers2012Poster.jpg',
-        title: 'avengers end the game',
-        relase: '2011',
-    },
-
-    {   
-        poster: 'https://upload.wikimedia.org/wikipedia/id/f/f9/TheAvengers2012Poster.jpg',
-        title: 'avengers infinity war',
-        relase: '2011',
-    },
-
-    {   
-        poster: 'https://upload.wikimedia.org/wikipedia/id/f/f9/TheAvengers2012Poster.jpg',
-        title: 'avengers infinity war',
-        relase: '2011',
-    },
-
-    {   
-        poster: 'https://upload.wikimedia.org/wikipedia/id/f/f9/TheAvengers2012Poster.jpg',
-        title: 'avengers infinity war',
-        relase: '2011',
-    },
-
-    {   
-        poster: 'https://upload.wikimedia.org/wikipedia/id/f/f9/TheAvengers2012Poster.jpg',
-        title: 'avengers infinity war',
-        relase: '2011',
-    },
-
-]
-
-function cards(){
-    let cardList = '';
-
-    items.forEach(item => {
-        cardList += card(item);
-    })
-
-    return (
-        `<div class="cards">
-            ${cardList}
         </div>`
     );
 }
 
-function card(item){
+function newRelease(movies){
+    let release = '';
+
+    movies.forEach(m => release += card(m));
+
     return (
-        `<div class="card">
-            <img src=${item.poster}>
-            <div class="info">
-                <h3 class="title">${item.title}</h3>
-                <p class="year">${item.relase}</p>
+        `<div class="new-release">
+            <div class="heading">
+                <h3>New Release</h3>
+                <span class="see-all">See All</span>
+            </div>
+
+            <div class="cards">
+                ${release}
             </div>
         </div>`
     )
 }
 
 
+function card(m){
+    const img = {...m.primaryImage};
+    const poster = img.url;
+    return (
+        `<div class="card">
+            <img src=${poster} alt=${m.titleText.text}>
+            <div class="info">
+                <h3 class="title">${m.titleText.text}</h3>
+                <p class="year">${m.releaseYear.year}</p>
+            </div>
+        </div>`
+    )
+}
 
+
+function getAllMovies(){
+    const options = {
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Key': 'b347bc0983mshe9d646e8a29ed83p1b05b4jsn708feff2a216',
+            'X-RapidAPI-Host': 'moviesdatabase.p.rapidapi.com'
+        }
+    };
+    
+    return fetch('https://moviesdatabase.p.rapidapi.com/titles?info=base_info&limit=20&page=1&titleType=movie&genre=Action&year=2022', options)
+        .then(response => response.json())
+        .then(response => response)
+        .catch(err => err);
+}
+
+// const searchInput = document.querySelector('.search-input');
+
+// searchInput.addEventListener('keydown', function(e){
+//     if(e.keyCode === 13 && e.target.value !== ''){
+//         const keyword = e.target.value;
+//         console.log(keyword);
+//     }
+// })
 
 
 function genre(){
-    content.innerHTML = '<h2>Genre</h2>';
+    const mainMovie = document.querySelector('.main-movie');
+
+    mainMovie.innerHTML = '<h2>Genre</h2>';
 }
 
 function comingSoon(){
-    content.innerHTML = '<h2>Coming Soon</h2>';
+    const mainMovie = document.querySelector('.main-movie');
+    
+    mainMovie.innerHTML = '<h2>Coming Soon</h2>';
 }
-

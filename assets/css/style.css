@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500&family=Oswald:wght@600&family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Quicksand:400,700&display=swap');
 
 * {
     margin: 0;
@@ -7,7 +7,7 @@
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Quicksand', sans-serif;
 }
 
 .container {
@@ -16,12 +16,12 @@ body {
 }
 
 header {
-    border: 1px solid #ddd;
+    border-right: 1px solid #ddd;
 }
 
 .logo {
     font-size: 1.5em;
-    margin: 20px;
+    margin: 30px 20px;
 }
 
 nav ul {
@@ -38,20 +38,19 @@ nav h3 {
 
 
 nav li a {
-    text-decoration: none;
-    display: block;
-    padding: 3px;
+    font-size: 15px;
+    font-weight: bold;
     margin-bottom: 10px;
+    text-decoration: none;
     color: #999;
     display: flex;
     align-items: center;
     padding-left: 20px;
-    font-weight: bold;
-    font-size: 15px;
+    
 }
 
 nav li a:hover {
-    color: red;
+    color: #d22f27;
 }
 
 nav li a span {
@@ -59,8 +58,8 @@ nav li a span {
 }
 
 .active-menu {
-    border-right: 2px solid red;
-    color: red;
+    border-right: 2px solid #d22f27;
+    color: #d22f27;
 }
 
 
@@ -71,46 +70,46 @@ main {
 
 main content {
     height: 100vh;
-    overflow: auto;
     padding: 30px;
+    overflow: auto;
 }
 
 main aside {
     border-left: 1px solid #ddd;
 }
 
-
 .search-bar {
-    width: 50%;
+    width: 60%;
 }
 
-.search-bar input {
+.search-bar .search-input {
     width: 100%;
-    padding: 8px 10px;
+    padding: 9px 15px;
     border-radius: 50px;
     border: 1px solid #999;
 }
 
+.search-bar .search-input:focus {
+    outline-color: #d22f27;
+}
+
 .jumbotron {
     width: 100%;
-    height: 250px;
+    height: 260px;
     margin-top: 20px;
     margin-bottom: 30px;
     border-radius: 20px;
     overflow: hidden;
     position: relative;
-    border: 1px solid black;
     background: linear-gradient(to right, black, #111);
     z-index: 1;
 }
 
 .jumbotron .hero {
-    background-position: 50% -50%;
-    object-fit: center;
-    position: absolute;
-    z-index: -1;
     width: 100%;
     height: 100%;
+    position: absolute;
+    z-index: -1;
     top: 0;
     bottom: 0;
     left: 30%;
@@ -119,32 +118,41 @@ main aside {
 }
 
 .jumbotron .title {
-    color: white;
     width: 55%;
-    font-size: 20px;
+    font-size: 25px;
+    margin-top: 70px;
     margin-left: 30px;
-    margin-top: 35px;
     margin-bottom: 10px;
+    color: white;
+    display: flex;
+    flex-direction: column;
 }
 
-.jumbotron .description {
-    color: #ddd;
-    font-size: 13px;
-    letter-spacing: 0.5px;
+.jumbotron .title span {
+    font-size: 15px;
+    margin-bottom: 5px;
+    color: #d22f27;
+}
+
+.jumbotron .genre {
     width: 55%;
-    margin-left: 30px;
+    font-size: 13px;
     font-weight: medium;
+    margin-left: 30px;
+    line-height: 1.5;
+    letter-spacing: 0.5px;
+    color: #ddd;
 }
 
 .jumbotron button {
-    padding: 10px 15px;
+    font-weight: bold;
+    margin-top: 20px;
     margin-left: 30px;
-    margin-top: 30px;
-    background-color: red;
+    padding: 10px 15px;
     border: none;
     border-radius: 5px;
+    background-color: #d22f27;
     color: white;
-    font-weight: bold;
     cursor: pointer;
 }
 
@@ -156,26 +164,59 @@ main aside {
     opacity: 1;
 }
 
-.cards {
+.main-movie .new-release {
+    margin-top: 50px;
+}
+
+.main-movie .heading {
     display: flex;
-    flex-wrap: wrap;
+    align-items: center;
     justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.main-movie .heading h3, 
+.main-movie .heading span {
+    font-size: 14px;
+}
+
+.main-movie .heading span {
+    font-weight: bold;
+}
+
+.main-movie .heading span:hover {
+    cursor: pointer;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(50px, 125px));
+    justify-content: space-between;
+    column-gap: 10px;
+    row-gap: 20px;
 }
 
 .card {
-    margin-top: 20px;
-    width: 120px;
+    height: 180px;
     position: relative;
     overflow: hidden;
     border-radius: 10px;
 }
 
+.card:hover {
+    opacity: 0.8;
+    cursor: pointer;
+}
+
 .card img {
     width: 100%;
     height: 100%;
+    background-position: cover;
+    object-fit: cover;
 }
 
 .card .info {
+    padding: 5px;
     position: absolute;
     top: 0;
     left: 0;
@@ -186,7 +227,6 @@ main aside {
     flex-direction: column;
     text-align: center;
     justify-content: end;
-    padding: 5px;
 }
 
 .card .title {
@@ -198,53 +238,31 @@ main aside {
 .card .year {
     font-size: 10px;
     font-weight: bold;
-    color: #eee;
-    margin-bottom: 20px;
     margin-top: 10px;
+    margin-bottom: 20px;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-}
-
-.heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.heading h3, .heading p {
-    font-size: 15px;
-}
-
-.heading p {
-    font-weight: bold;
-}
-
-.heading p:hover {
-    cursor: pointer;
-}
-
-.new-relase {
-    margin-top: 30px;
+    color: #eee;
 }
 
 
 /* scroll */
 /* width */
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
     width: 10px;
-  }
+  } */
   
   /* Track */
-  ::-webkit-scrollbar-track {
+  /* ::-webkit-scrollbar-track {
     background: #fff;
-  }
+  } */
   
   /* Handle */
-  ::-webkit-scrollbar-thumb {
+  /* ::-webkit-scrollbar-thumb {
     opacity: 0;
-  }
+  } */
   
   /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
+  /* ::-webkit-scrollbar-thumb:hover {
     background: #555;
-  }
+  } */
 

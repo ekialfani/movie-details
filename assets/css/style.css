@@ -188,6 +188,11 @@ main aside {
     cursor: pointer;
 }
 
+.coming-soon h3 {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
 .cards {
     display: grid;
     grid-template-columns: repeat(5, minmax(50px, 125px));
@@ -211,8 +216,6 @@ main aside {
 .card img {
     width: 100%;
     height: 100%;
-    background-position: cover;
-    object-fit: cover;
 }
 
 .card .info {
@@ -247,22 +250,22 @@ main aside {
 
 /* scroll */
 /* width */
-/* ::-webkit-scrollbar {
+::-webkit-scrollbar {
     width: 10px;
-  } */
+}
   
-  /* Track */
-  /* ::-webkit-scrollbar-track {
+/* Track */
+::-webkit-scrollbar-track {
     background: #fff;
-  } */
+}
   
-  /* Handle */
-  /* ::-webkit-scrollbar-thumb {
+/* Handle */
+::-webkit-scrollbar-thumb {
     opacity: 0;
-  } */
+}
   
-  /* Handle on hover */
-  /* ::-webkit-scrollbar-thumb:hover {
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
     background: #555;
-  } */
+}
 

@@ -1,50 +1,38 @@
 const mainMenu = document.querySelectorAll('a');
+const mainMovie = document.querySelector('.main-movie');
 
 window.addEventListener('load', () => {
     const homeMenu = document.getElementsByClassName('home')[0];
-    const mainMovie = document.querySelector('.main-movie');
 
-    mainMovie.innerHTML = '<span>Loading...</span>';
+    homeMenu.classList.add('active-menu');
 
-    setTimeout(() => {
-        homeMenu.classList.add('active-menu');
-        home();
-    }, 800);
+    home();
   });
 
 mainMenu.forEach(menu => {
     menu.addEventListener('click', function(){
         mainMenu.forEach(a => a.classList.remove('active-menu'));
 
-        const mainMovie = document.querySelector('.main-movie');
-
         menu.classList.add('active-menu');
 
         if(menu.classList.contains('home')){
-            mainMovie.innerHTML = '<span>Loading...</span>';
-            setTimeout(() => {
-                home();
-            }, 800)
+            home();
 
         }else if(menu.classList.contains('genre')){
+            genre();
 
-            mainMovie.innerHTML = '<span>Loading...</span>';
-            setTimeout(() => {
-                genre();
-            }, 800)
         }else {
-            mainMovie.innerHTML = '<span>Loading...</span>';
-
-            setTimeout(() => {
-                comingSoon();
-            }, 800)
+            comingSoon();
         }
     })
 })
 
 
 function home(){
-    movieList();
+    mainMovie.innerHTML = '<span>Loading...<span>';
+    setTimeout(() => {
+        movieList();
+    }, 0);
 }
 
 async function movieList(){
@@ -63,12 +51,10 @@ async function movieList(){
         </div>`
     )
     
-    updateUI(result);
+    updateAllMovies(result);
 }
 
-function updateUI(cards){
-    const mainMovie = document.querySelector('.main-movie');
-
+function updateAllMovies(cards){
     mainMovie.innerHTML = cards;
 }
 
@@ -113,17 +99,18 @@ function newRelease(movies){
 
 function card(m){
     const img = {...m.primaryImage};
-    const poster = img.url;
+
     return (
         `<div class="card">
-            <img src=${poster} alt=${m.titleText.text}>
+            <img src="${img.url}" alt=${m.titleText.text}>
             <div class="info">
                 <h3 class="title">${m.titleText.text}</h3>
-                <p class="year">${m.releaseYear.year}</p>
+                <p class="year">(${m.releaseYear.year})</p>
             </div>
         </div>`
     )
 }
+
 
 
 function getAllMovies(){
@@ -152,13 +139,58 @@ function getAllMovies(){
 
 
 function genre(){
-    const mainMovie = document.querySelector('.main-movie');
+    mainMovie.innerHTML = '<span>Loading...<span>';
 
-    mainMovie.innerHTML = '<h2>Genre</h2>';
+    setTimeout(() => {
+        mainMovie.innerHTML = '<h2>Genre</h2>';
+    }, 800);
 }
 
 function comingSoon(){
-    const mainMovie = document.querySelector('.main-movie');
+    mainMovie.innerHTML = '<span>Loading...</span>';
+
+    setTimeout(() => {
+        movieComingSoon();
+    }, 0);
+}
+
+
+async function movieComingSoon(){
+    const response = await getComingSoon();
+    const movies = response.results;
+
+    updateComingSoon(movies);
+}
+
+function updateComingSoon(movies){
+    let result = '';
+
+    movies.forEach(m => result += card(m));
     
-    mainMovie.innerHTML = '<h2>Coming Soon</h2>';
+    const upComing = (
+        `<div class="coming-soon">
+            <h3>Coming Soon</h3>
+            <div class="cards">
+                ${result}
+            </div>
+        </div>`
+    )
+
+    mainMovie.innerHTML = upComing;
+}
+
+
+function getComingSoon(){
+    const options = {
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Key': 'b347bc0983mshe9d646e8a29ed83p1b05b4jsn708feff2a216',
+            'X-RapidAPI-Host': 'moviesdatabase.p.rapidapi.com'
+        }
+    };
+    
+    return fetch('https://moviesdatabase.p.rapidapi.com/titles/x/upcoming?info=base_info&limit=20&page=1&titleType=movie&genre=Action', options)
+        .then(response => response.json())
+        .then(response => response)
+        .catch(err => err);
 }

@@ -202,28 +202,28 @@ main aside {
     row-gap: 20px;
 }
 
-.card {
+.main-card {
     height: 180px;
     position: relative;
     overflow: hidden;
     border-radius: 10px;
 }
 
-.card:hover {
+.main-card:hover {
     opacity: 0.5;
     cursor: pointer;
 }
 
-.card:active {
+.main-card:active {
     opacity: 1;
 }
 
-.card img {
+.main-card img {
     width: 100%;
     height: 100%;
 }
 
-.card .info {
+.main-card-info {
     padding: 5px;
     position: absolute;
     top: 0;
@@ -237,13 +237,13 @@ main aside {
     justify-content: end;
 }
 
-.card .title {
+.main-card .title {
     font-size: 14px;
     color: white;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
 
-.card .year {
+.main-card .year {
     font-size: 10px;
     font-weight: bold;
     margin-top: 10px;
@@ -253,7 +253,9 @@ main aside {
 }
 
 .active-card {
-    opacity: 0.5;
+    /* background-color: #888; */
+    /* border: 1px solid #d22f27; */
+    box-shadow: 0px 0px 0px 2px #d22f27;
 }
 
 
@@ -274,7 +276,7 @@ main aside {
     align-items: center;
 }
 
-.card-detail {
+.detail-card {
     width: 45%;
     padding-left: 20px;
     padding-right: 20px;
@@ -293,34 +295,32 @@ main aside {
     animation: animationHide 0.2s forwards;
 }
 
-.card-detail h3 {
+.detail-card h3 {
     text-align: center;
     margin-bottom: 20px;
 }
 
-.card-detail-body {
+.detail-card-body {
     display: flex;
     border: 1px solid #ddd;
 }
 
-.detail-image {
+.detail-card-image {
     padding: 20px;
     border-right: 1px solid #ddd;
-    /* background-color: orange; */
 }
 
-.detail-image img {
+.detail-card-image img {
     width: 200px;
     height: 300px;
 }
 
-.detail-info {
+.detail-card-info {
     list-style: none;
     padding-bottom: 20px;
     padding-left: 20px;
     padding-right: 20px;
     font-size: 14px;
-    /* background-color: blue; */
 }
 
 .close-button {
@@ -364,12 +364,124 @@ main aside {
     background-color: #d22f27;
 }
 
-.detail-info li {
+.detail-card-info li {
     border-bottom: 1px solid #ddd;
     padding: 15px 0;
 }
 
+aside {
+    padding-left: 20px;
+    padding-top: 40px;
+    height: 100vh;
+    overflow: scroll;
+}
 
+aside h2 {
+    font-size: 18px;
+
+}
+
+aside h3 {
+    font-size: 15px;
+}
+
+.most-popular h3 {
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+
+.top-rate h3 {
+    margin-top: 50px;
+    margin-bottom: 5px;
+}
+
+.cards-popular, .cards-top-rate {
+    display: grid;
+    grid-template-columns: 90%;
+    grid-auto-flow: row;
+    row-gap: 10px;
+}
+
+.sidebar-card {
+    display: grid;
+    grid-template-columns: 30% 70%;
+    grid-template-rows: 125px;
+    gap: 15px;
+    position: relative;
+    padding: 10px;
+    border-radius: 10px;
+    margin-left: -10px;
+}
+
+.sidebar-card:hover {
+    cursor: pointer;
+    background-color: #eee;
+}
+
+.sidebar-card:active {
+    background-color: white;
+}
+
+.sidebar-card img {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
+
+.sidebar-card-info .title {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.sidebar-card-info .genre {
+    width: 80%;
+    font-size: 13px;
+    color: #d22f27;
+}
+
+.sidebar-card-info .rating {
+    position: absolute;
+    bottom: 20px;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.rating {
+    display: flex;
+}
+
+.rating .rating-value {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    color: #d22f27;
+}
+
+.rating-value span {
+    margin-left: 3px;
+    color: black;
+}
+
+aside button {
+    background-color: #d22f27;
+    border: none;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-weight: bold;
+    color: white;
+    border-radius: 5px;
+    width: 80%;
+    margin-top: 20px;
+    text-transform: capitalize;
+}
+aside button:hover {
+    background-color: #ad1109;
+    cursor: pointer;
+}
+
+aside button:active {
+    background-color: #d22f27;
+}
 
 @keyframes animationShow {
     0% {
@@ -396,8 +508,6 @@ main aside {
 }
 
 
-
-
 /* scroll */
 /* width */
 ::-webkit-scrollbar {
@@ -418,4 +528,3 @@ main aside {
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
-

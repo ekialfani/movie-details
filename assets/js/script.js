@@ -1,6 +1,5 @@
 const mainMenu = document.querySelectorAll('a');
 const mainMovie = document.querySelector('.main-movie');
-const loading = '<span>Loading...</span>';
 
 window.addEventListener('load', () => {
     const homeMenu = document.getElementsByClassName('home')[0];
@@ -31,25 +30,23 @@ mainMenu.forEach(menu => {
 })
 
 
-function home(){
-    mainMovie.innerHTML = loading;
-
-    setTimeout(() => {
-        movieList();
-    }, 0);
-}
+const home = () => movieList();
 
 
 async function movieList(){
     const response = await getAllMovies();
 
-    const recomendation = [];
-    const release = [];
-    response.results.forEach((movies, index) => {
-        (index <= 9) ? recomendation.push(movies) : release.push(movies); 
-    })
-    
-    updateAllMovies(recomendation, release);
+    mainMovie.innerText = 'Loading...';
+
+    setTimeout(() => {
+        const recomendation = [];
+        const release = [];
+        response.results.forEach((movies, index) => {
+            (index <= 9) ? recomendation.push(movies) : release.push(movies); 
+        })
+        
+        updateAllMovies(recomendation, release);    
+    }, 0);
 }
 
 
@@ -127,7 +124,78 @@ document.body.addEventListener('click', function(e){
             fluid.style.display = 'none';
         }, 150);
     }
+
+    if(e.target.classList.contains('search-input')){
+        e.target.addEventListener('keydown', async function(e){
+            if(e.keyCode == 13 && e.target.value !== ''){
+                const value = e.target.value;
+
+                let keyword = '';
+                [...value].map(v => {
+                    if(v === ' '){
+                        keyword += '%20'
+                    }else {
+                        keyword += v;
+                    }
+                });
+
+                const response = await getMovieByKeyword(keyword);
+
+                mainMovie.innerText = 'Loading...';
+
+                setTimeout(() => {
+                    if(response.entries === 0){
+                        mainMovie.innerText = 'Error: movie not found';
+                    }else {
+                        const movies = response.results;
+
+                        movieSearch(movies);
+                    }
+                }, 0);
+            }
+        })
+    }
 })
+
+
+function movieSearch(movies){
+    let resultSearch = '';
+    movies.forEach(m => resultSearch += mainCard(m));
+
+    updateMovieSearch(resultSearch);
+}
+
+
+function updateMovieSearch(resultSearch){
+    const cards = (
+        `<div>
+            <div class="heading">
+                <h3>Search Result</h3>
+            </div>
+            <div class="cards">
+                ${resultSearch}
+            </div>
+        </div>`
+    );
+
+    mainMovie.innerHTML = cards;
+}
+
+
+function getMovieByKeyword(keyword){
+    const options = {
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Key': 'b347bc0983mshe9d646e8a29ed83p1b05b4jsn708feff2a216',
+            'X-RapidAPI-Host': 'moviesdatabase.p.rapidapi.com'
+        }
+    };
+    
+    return fetch(`https://moviesdatabase.p.rapidapi.com/titles/search/title/${keyword}?info=base_info&limit=50&page=1&titleType=movie`, options)
+        .then(response => response.json())
+        .then(response => response)
+        .catch(err => err);
+}
 
 
 async function movieDetails(idMovie){
@@ -147,7 +215,7 @@ function updateMovieDetails(movie){
 
 
 function genre(){
-    mainMovie.innerHTML = loading;
+    mainMovie.innerText = 'Loading...';
 
     setTimeout(() => {
         mainMovie.innerHTML = '<h2>Genre</h2>';
@@ -155,20 +223,19 @@ function genre(){
 }
 
 
-function comingSoon(){
-    mainMovie.innerHTML = loading;
-
-    setTimeout(() => {
-        movieComingSoon();
-    }, 0);
-}
+const comingSoon = () => movieComingSoon();
 
 
 async function movieComingSoon(){
     const response = await getComingSoon();
-    const movies = response.results;
 
-    updateComingSoon(movies);
+    mainMovie.innerText = 'Loading...';
+
+    setTimeout(() => {
+        const movies = response.results;
+
+        updateComingSoon(movies);
+    }, 0);
 }
 
 
@@ -190,16 +257,11 @@ function updateComingSoon(movies){
 }
 
 
-function sidebar(){
-    const category = document.querySelector('.movie-category');
-    category.innerHTML = loading;
-
-    setTimeout(() => {
-        movieCategory();
-    }, 0);
-}
+const sidebar = () => movieCategory();
 
 async function movieCategory(){
+    const category = document.querySelector('.movie-category');
+
     const movieIdList = {
         popular: [
             "tt14174940",
@@ -228,10 +290,14 @@ async function movieCategory(){
         ]
     };
 
+    category.innerText = 'Loading...';
+
     const popularMovies = await getMovieByCategory(movieIdList.popular);
     const topRateMovies = await getMovieByCategory(movieIdList.topRate);
-    
-    updateCategory(popularMovies, topRateMovies);
+
+    setTimeout(() => {
+        updateCategory(popularMovies, topRateMovies);
+    }, 0);
 }
 
 
@@ -289,13 +355,14 @@ function mainCard(m){
     const imgUrl = (m.primaryImage !== null) ? m.primaryImage.url : defaultImage;
     const title = m.titleText.text;
     const idMovie = m.id;
+    const release = (m.releaseYear !== null) ? `(${m.releaseYear.year})` : '';
 
     return (
         `<li class="card main-card" data-id=${idMovie}>
             <img src="${imgUrl}" alt=${title}>
             <div class="info main-card-info">
                 <h3 class="title">${title}</h3>
-                <p class="year">(${m.releaseYear.year})</p>
+                <p class="year">${release}</p>
             </div>
         </li>`
     )
@@ -309,7 +376,7 @@ function detailCard(m){
     const genres = m.genres.genres;
     const voteCount = m.ratingsSummary.voteCount;
     const ratings = (voteCount !== 0) ?  m.ratingsSummary.aggregateRating : '-';
-    const release = m.releaseYear.year;
+    const release = (m.releaseYear !== null) ? `(${m.releaseYear.year})` : '-';
     const plot = m.plot.plotText.plainText;
 
     return (
@@ -399,15 +466,6 @@ function getAllMovies(){
         .then(response => response)
         .catch(err => err);
 }
-
-// const searchInput = document.querySelector('.search-input');
-
-// searchInput.addEventListener('keydown', function(e){
-//     if(e.keyCode === 13 && e.target.value !== ''){
-//         const keyword = e.target.value;
-//         console.log(keyword);
-//     }
-// })
 
 
 function getMovieByCategory(idMovie){

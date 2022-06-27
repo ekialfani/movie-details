@@ -12,15 +12,17 @@ window.addEventListener('load', () => {
 
 
 mainMenu.forEach(menu => {
-    menu.addEventListener('click', function(){
+    menu.addEventListener('click', function(e){
+        e.preventDefault();
         mainMenu.forEach(a => a.classList.remove('active-menu'));
 
-        menu.classList.add('active-menu');
+        e.target.parentElement.classList.add('active-menu');
+        
 
-        if(menu.classList.contains('home')){
+        if(e.target.textContent === 'Home'){
             home();
 
-        }else if(menu.classList.contains('genre')){
+        }else if(e.target.textContent === 'Genre'){
             genre();
 
         }else {
@@ -34,9 +36,9 @@ const home = () => movieList();
 
 
 async function movieList(){
-    const response = await getAllMovies();
-
     mainMovie.innerText = 'Loading...';
+
+    const response = await getAllMovies();
 
     setTimeout(() => {
         const recomendation = [];
@@ -104,10 +106,11 @@ function activeCard(){
 
 
 document.body.addEventListener('click', function(e){
-    if(e.target.classList.contains('info')){
+    if(e.target.parentElement.classList.contains('card')){
         const cards = document.querySelectorAll('.card');
         cards.forEach(card => card.classList.remove('active-card'));
         e.target.parentElement.classList.add('active-card');
+        console.log(e.target.parentElement);
 
         const idMovie = e.target.parentElement.dataset.id;
         movieDetails(idMovie);
@@ -139,9 +142,9 @@ document.body.addEventListener('click', function(e){
                     }
                 });
 
-                const response = await getMovieByKeyword(keyword);
-
                 mainMovie.innerText = 'Loading...';
+
+                const response = await getMovieByKeyword(keyword);
 
                 setTimeout(() => {
                     if(response.entries === 0){
@@ -156,6 +159,7 @@ document.body.addEventListener('click', function(e){
         })
     }
 })
+
 
 
 function movieSearch(movies){
@@ -182,22 +186,6 @@ function updateMovieSearch(resultSearch){
 }
 
 
-function getMovieByKeyword(keyword){
-    const options = {
-        method: 'GET',
-        headers: {
-            'X-RapidAPI-Key': 'b347bc0983mshe9d646e8a29ed83p1b05b4jsn708feff2a216',
-            'X-RapidAPI-Host': 'moviesdatabase.p.rapidapi.com'
-        }
-    };
-    
-    return fetch(`https://moviesdatabase.p.rapidapi.com/titles/search/title/${keyword}?info=base_info&limit=50&page=1&titleType=movie`, options)
-        .then(response => response.json())
-        .then(response => response)
-        .catch(err => err);
-}
-
-
 async function movieDetails(idMovie){
     const response = await getMovieById(idMovie);
     const movie = response.results;
@@ -215,11 +203,101 @@ function updateMovieDetails(movie){
 
 
 function genre(){
-    mainMovie.innerText = 'Loading...';
+    genreList();
+}
 
-    setTimeout(() => {
-        mainMovie.innerHTML = '<h2>Genre</h2>';
-    }, 800);
+async function genreList(){
+    const response = await getGenreList();
+    const genres = response.results;
+
+    updateGenreList(genres);
+}
+
+
+function updateGenreList(genres){
+    const genre = (
+        `<div>
+            <ol class="genre-list">
+                ${genres.map(g => (g !== null) ? `<li>${g}</li>` : '').join('')}
+            </ol>
+            <div class="movie-genres">
+                
+            </div>
+        </div>`
+    )
+    
+    mainMovie.innerHTML = genre;
+}
+
+
+document.body.addEventListener('click', async function(e){
+    if(e.target.parentElement.classList.contains('genre-list')){
+        const genres = document.querySelectorAll('.genre-list li');
+
+        genres.forEach(g => g.classList.remove('active-genre'));
+
+        e.target.classList.add('active-genre');
+        
+        const genre = e.target.textContent;
+        
+        const response = await getMovieByGenre(genre);
+        const movies = response.results;
+        
+        movieGenres(movies, genre);
+    }
+})
+
+
+function movieGenres(movies, genre){
+    const genres = document.querySelector('.movie-genres');
+
+    let card = '';
+    movies.forEach(m => card += mainCard(m));
+
+    const result = (
+        `<div>
+            <div class="heading">
+                <h3>${genre}</h3>
+            </div>
+            <ul class="cards">
+                ${card}
+            </ul>
+        </div>`
+    )
+
+    genres.innerHTML = result;
+}
+
+
+function getGenreList(){
+    const options = {
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Key': 'b347bc0983mshe9d646e8a29ed83p1b05b4jsn708feff2a216',
+            'X-RapidAPI-Host': 'moviesdatabase.p.rapidapi.com'
+        }
+    };
+    
+    return fetch('https://moviesdatabase.p.rapidapi.com/titles/utils/genres', options)
+        .then(response => response.json())
+        .then(response => response)
+        .catch(err => err);
+}
+
+
+function getMovieByGenre(genre){
+    const options = {
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Key': 'b347bc0983mshe9d646e8a29ed83p1b05b4jsn708feff2a216',
+            'X-RapidAPI-Host': 'moviesdatabase.p.rapidapi.com'
+        }
+    };
+    
+    return fetch(`https://moviesdatabase.p.rapidapi.com/titles?info=base_info&limit=20&page=1&titleType=movie&genre=${genre}&endYear=2022`, options)
+        .then(response => response.json())
+        .then(response => response)
+        .catch(err => err);
 }
 
 
@@ -227,9 +305,9 @@ const comingSoon = () => movieComingSoon();
 
 
 async function movieComingSoon(){
-    const response = await getComingSoon();
-
     mainMovie.innerText = 'Loading...';
+
+    const response = await getComingSoon();
 
     setTimeout(() => {
         const movies = response.results;
@@ -462,6 +540,22 @@ function getAllMovies(){
     };
     
     return fetch('https://moviesdatabase.p.rapidapi.com/titles?info=base_info&limit=20&page=1&titleType=movie&genre=Action&year=2022', options)
+        .then(response => response.json())
+        .then(response => response)
+        .catch(err => err);
+}
+
+
+function getMovieByKeyword(keyword){
+    const options = {
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Key': 'b347bc0983mshe9d646e8a29ed83p1b05b4jsn708feff2a216',
+            'X-RapidAPI-Host': 'moviesdatabase.p.rapidapi.com'
+        }
+    };
+    
+    return fetch(`https://moviesdatabase.p.rapidapi.com/titles/search/title/${keyword}?info=base_info&limit=50&page=1&titleType=movie`, options)
         .then(response => response.json())
         .then(response => response)
         .catch(err => err);
